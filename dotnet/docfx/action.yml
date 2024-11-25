@@ -1,0 +1,34 @@
+name: DocFx
+description: "DocFx"
+inputs:
+  solution-path:
+    description: Dotnet solution file path
+  dotnet-version:
+    default: '[9.0.x]'
+    description: dotnet framework version
+  docfx-json-path:
+    default: 'docfx/docfx.json'
+    description: DocFx json file path
+  publish-dir:
+    default: 'docs'
+    description: DocFx publish directory
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Dotnet Setup
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - run: dotnet tool update -g docfx
+    - run: docfx ${{ inputs.docfx-json-path }}
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{ inputs.publish-dir }}

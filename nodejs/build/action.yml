@@ -1,0 +1,11 @@
+name: Build
+description: "Build Dotnet application"
+inputs:
+  publish:
+    description: Publish the packages to NPM registry
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Repository 
+      uses: actions/checkout@v4

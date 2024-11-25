@@ -1,0 +1,11 @@
+name: CodeQL
+description: "CodeQL Analysis"
+inputs:
+  publish:
+    description: Publish the packages to NPM registry
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Repository 
+      uses: actions/checkout@v4

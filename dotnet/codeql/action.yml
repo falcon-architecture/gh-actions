@@ -1,0 +1,19 @@
+name: CodeQL
+description: "CodeQL Analysis"
+inputs:
+  language:
+    description: CodeQL Languages
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ inputs.language }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
