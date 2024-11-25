@@ -1,7 +1,7 @@
 name: CodeQL
 description: "CodeQL Analysis"
 inputs:
-  language:
+  languages:
     description: CodeQL Languages
 
 runs:
@@ -13,7 +13,7 @@ runs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        languages: ${{ inputs.language }}
+        languages: ${{ inputs.languages }}
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
