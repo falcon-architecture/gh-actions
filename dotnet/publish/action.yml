@@ -3,6 +3,12 @@ description: "Publish Dotnet pakcages"
 inputs:
   solution-path:
     description: Dotnet solution file path
+  github-api-key:
+    default: ${{secrets.GITHUB_API_KEY}}
+    description: 'GitHub API Key'
+  nuget-api-key:
+    default: ${{secrets.NUGET_API_KEY}}
+    description: 'Nuget API Key'
   dotnet-version:
     default: '[9.0.x]'
     description: dotnet framework version 
@@ -36,9 +42,9 @@ runs:
     - name: Publish to GitHub Packages
       if: ${{ inputs.publish-nuget == 'true' }}
       shell: bash
-      run: dotnet nuget push '*.nupkg' --api-key ${{ secrets.NUGET_API_KEY }} --source 'https://api.nuget.org/v3/index.json'
+      run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.github-api-key }} --source 'https://api.nuget.org/v3/index.json'
 
     - name: Publish to NuGet
       if: ${{ inputs.publish-github == 'true' }}
       shell: bash
-      run: dotnet nuget push '*.nupkg' --api-key ${{ secrets.NUGET_API_KEY }} --source 'https://api.nuget.org/v3/index.json'
+      run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.nuget-api-key }} --source 'https://api.nuget.org/v3/index.json'
