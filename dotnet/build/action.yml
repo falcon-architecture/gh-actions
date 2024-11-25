@@ -3,6 +3,8 @@ description: "Build Dotnet application"
 inputs:
   solution-path:
     description: Dotnet solution file path
+  test-solution-path:
+    description: Dotnet test solution path
   dotnet-version:
     default: '[9.0.x]'
     description: dotnet framework version 
