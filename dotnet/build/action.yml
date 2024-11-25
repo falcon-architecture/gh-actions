@@ -19,7 +19,10 @@ runs:
 
     - name: Restore dependencies
       shell: bash
-      run: dotnet restore ${{ inputs.solution-path }}
+      run: |
+        pwd
+        ls -ls
+        dotnet restore ${{ inputs.solution-path }}
 
     - name: Build
       shell: bash

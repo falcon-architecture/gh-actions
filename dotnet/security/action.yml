@@ -12,14 +12,14 @@ inputs:
     default: '[9.0.x]'
     description: dotnet framework version
   github-token:
-    default: ${{ secrets.GITHUB_TOKEN }}
+    required: true
     description: 'GitHub Token'
   sonar-project-key:
     description: 'Sonar Project Key'
   sonar-organization:
     description: 'Sonar Organization'
   sonar-token:
-    default: ${{ secrets.SONAR_TOKEN }}
+    required: true
     description: 'Sonar Token'
 
 runs:
@@ -65,13 +65,16 @@ runs:
         dotnet tool list --tool-path .\.sonar\scanner
 
     - name: Restore NuGet packages
+      shell: bash
       run: dotnet restore
       
     - name: Run tests and collect coverage
+      shell: bash
       run: |
         .\.sonar\scanner\dotnet-coverage collect "dotnet test ${{inputs.test-solution-path}}" -f xml -o "coverage.xml"
 
     - name: SonarCloud Scan
+      shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         SONAR_TOKEN: ${{ inputs.sonar-token }}
