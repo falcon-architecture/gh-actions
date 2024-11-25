@@ -19,10 +19,13 @@ runs:
         dotnet-version: ${{ inputs.dotnet-version }}
 
     - name: Restore dependencies
+      shell: bash
       run: dotnet restore ${{ inputs.solution-path }}
 
     - name: Build
+      shell: bash
       run: dotnet build ${{ inputs.solution-path }} --no-restore
 
     - name: Test
+      shell: bash
       run: dotnet test ${{ inputs.solution-path }} --no-build --no-restore

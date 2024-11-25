@@ -24,8 +24,13 @@ runs:
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
 
-    - run: dotnet tool update -g docfx
-    - run: docfx ${{ inputs.docfx-json-path }}
+    - name: Install DocFx Tool 
+      shell: bash
+      run: dotnet tool update -g docfx
+
+    - name: Run DocFx
+      shell: bash
+      run: docfx ${{ inputs.docfx-json-path }}
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v4
