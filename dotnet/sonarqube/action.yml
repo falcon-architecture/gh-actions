@@ -15,8 +15,10 @@ inputs:
     required: true
     description: 'GitHub Token'
   sonar-project-key:
+    required: true
     description: 'Sonar Project Key'
   sonar-organization:
+    required: true
     description: 'Sonar Organization'
   sonar-token:
     required: true
@@ -83,8 +85,8 @@ runs:
         SONAR_TOKEN: ${{ inputs.sonar-token }}
       run: |
         ./.sonar/scanner/dotnet-sonarscanner begin `
-              /k:"natarajanganapathi_falcon" `
-              /o:"natarajan-ganapathi" `
+              /k:"${{inputs.sonar-project-key}}" `
+              /o:"${{inputs.sonar-organization}}" `
               /d:sonar.token="${{ env.SONAR_TOKEN }}" `
               /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml" `
               /d:sonar.host.url="https://sonarcloud.io" `
