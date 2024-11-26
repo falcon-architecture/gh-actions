@@ -23,6 +23,9 @@ inputs:
   host-url:
     default: 'https://sonarcloud.io'
     description: 'Sonar Host URL'
+  inclusions:
+    default: 'src/**'
+    description: 'Inclusions'
   verbose:
     default: 'false'
     description: 'Verbose'
@@ -92,9 +95,15 @@ runs:
               /o:"${{ inputs.sonar-organization }}" \
               /d:sonar.token="${{ env.SONAR_TOKEN }}" \
               /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml" \
-              /d:sonar.inclusions="src/**" \
+              /d:sonar.inclusions="${{ inputs.inclusions }}" \
               /d:sonar.host.url="${{ inputs.host-url }}" \
               /d:sonar.scanner.skipJreProvisioning=true \
               /d:sonar.verbose="${{ inputs.verbose }}"
         dotnet build --no-restore --no-incremental
         ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
+
+    - name: Post-Action Debugging
+      shell: bash
+      run: |
+        echo "Post-Action directory listing:"
+        ls -al gh-actions/dotnet/sonarqube/
