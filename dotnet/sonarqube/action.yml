@@ -11,6 +11,8 @@ inputs:
     description: Dotnet solution file path
   test-solution-path:
     description: Dotnet test solution file path
+  inclusions:
+    description: Inclusions
   exclusions:
     description: Exclusions
   test-exclusions:
@@ -104,6 +106,7 @@ runs:
               /d:sonar.cs.vscoveragexml.reportsPaths="coverage.xml" \
               /d:sonar.host.url="${{inputs.host-url}}" \
               /d:sonar.sources="${{inputs.sources}}" \
+              /d:sonar.inclusions="${{inputs.inclusions}}" \
               /d:sonar.exclusions="${{inputs.exclusions}}" \
               /d:sonar.language="cs" \
               /d:sonar.scanner.skipJreProvisioning=true \
