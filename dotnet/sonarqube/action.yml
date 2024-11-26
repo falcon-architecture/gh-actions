@@ -106,4 +106,5 @@ runs:
       shell: bash
       run: |
         echo "Post-Action directory listing:"
-        ls -al gh-actions/dotnet/sonarqube/
+        pwd
+        ls -R
