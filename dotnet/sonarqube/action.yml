@@ -57,21 +57,23 @@ runs:
 
     - name: Install tools
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-      shell: powershell
+      shell: bash
       run: |
-        New-Item -Path .\.sonar\scanner -ItemType Directory
-        dotnet tool update dotnet-sonarscanner  --version 8.0.3  --tool-path .\.sonar\scanner
-        dotnet tool update dotnet-coverage --version 17.12.4  --tool-path .\.sonar\scanner
-        dotnet tool list --tool-path .\.sonar\scanner
+        mkdir -p ./.sonar/scanner
+        dotnet tool update dotnet-sonarscanner  --version 8.0.3  --tool-path ./.sonar/scanner
+        dotnet tool update dotnet-coverage --version 17.12.4  --tool-path ./.sonar/scanner
+        dotnet tool list --tool-path ./.sonar/scanner
 
     - name: Restore NuGet packages
       shell: bash
-      run: dotnet restore
+      run: |
+        dotnet restore ${{inputs.solution-path}}"
+        dotnet restore ${{inputs.test-solution-path}}"
       
     - name: Run tests and collect coverage
       shell: bash
       run: |
-        .\.sonar\scanner\dotnet-coverage collect "dotnet test ${{inputs.test-solution-path}}" -f xml -o "coverage.xml"
+        ./.sonar/scanner/dotnet-coverage collect "dotnet test ${{inputs.test-solution-path}}" -f xml -o "coverage.xml"
 
     - name: SonarCloud Scan
       shell: bash
@@ -79,7 +81,7 @@ runs:
         GITHUB_TOKEN: ${{ inputs.github-token }}
         SONAR_TOKEN: ${{ inputs.sonar-token }}
       run: |
-        .\.sonar\scanner\dotnet-sonarscanner begin `
+        ./.sonar/scanner/dotnet-sonarscanner begin `
               /k:"natarajanganapathi_falcon" `
               /o:"natarajan-ganapathi" `
               /d:sonar.token="${{ env.SONAR_TOKEN }}" `
@@ -92,4 +94,4 @@ runs:
               /d:sonar.verbose=true `
               /d:sonar.tests="tests/" 
         dotnet build --no-restore --no-incremental
-        .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
+        ./.sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ env.SONAR_TOKEN }}"
