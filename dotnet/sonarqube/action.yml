@@ -44,10 +44,6 @@ runs:
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
 
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
     - name: Cache SonarCloud packages
       uses: actions/cache@v4
       with:
@@ -107,4 +103,4 @@ runs:
       run: |
         echo "Post-Action directory listing:"
         pwd
-        ls -R
+        ls -ls
