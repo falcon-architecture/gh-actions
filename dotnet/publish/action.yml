@@ -4,42 +4,84 @@ inputs:
   solution-path:
     description: Dotnet solution file path
   github-api-key:
-    description: 'GitHub API Key'
+    description: "GitHub API Key"
   nuget-api-key:
-    description: 'Nuget API Key'
+    description: "Nuget API Key"
   dotnet-version:
-    default: '[9.0.x]'
-    description: dotnet framework version 
+    default: "[9.0.x]"
+    description: dotnet framework version
   publish-nuget:
-    default: 'true'
+    default: "false"
     description: Publish the packages to Nuget
+  nuget-user:
+    description: "Nuget User"
+  nuget-email:
+    description: "Nuget Email"
   publish-github:
-    default: 'false'
+    default: "false"
     description: Publish the packages to Nuget
+  version:
+    required: true
+    description: "Version"
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: ${{ inputs.dotnet-version }}
 
+    - name: Install Versionize
+      shell: bash
+      run: dotnet tool install -g versionize
+
     - name: Restore dependencies
       shell: bash
       run: dotnet restore ${{ inputs.solution-path }}
+
+    - name: Build
+      shell: bash
+      run: dotnet build -c release ${{ env.PROJECT }} --no-restore
+
+    - name: Bump versions
+      if: ${{ inputs.publish-nuget == 'true' || inputs.publish-github == 'true' }}
+      shell: bash
+      run: |
+        versionize --release-as ${{inputs.version}} --commit-suffix "[skip ci]"
+
+    - name: Push to Github
+      if: ${{ inputs.publish-nuget == 'true' || inputs.publish-github == 'true' }}
+      shell: bash
+      run: git push --follow-tags origin master
 
     - name: Pack
       if: ${{ inputs.publish-nuget == 'true' || inputs.publish-github == 'true' }}
       shell: bash
       run: dotnet pack -c release ${{ inputs.solution-path }} -o . --no-restore
 
-    - name: Publish to GitHub Packages
-      if: ${{ inputs.publish-nuget == 'true' }}
+    - name: Set up Git configuration
+      if: ${{ inputs.publish-github == 'true' }}
       shell: bash
-      run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.github-api-key }} --source 'https://api.nuget.org/v3/index.json'
+      run: |
+        git config --global user.name ${{ inputs.nuget-user }}
+        git config --global user.email ${{ inputs.nuget-email }}
+
+    - name: Authenticate
+      shell: bash
+      run: |
+        dotnet nuget add source \
+          --username ${{ inputs.nuget-user }} \
+          --password ${{ secrets.GH_PUBLISH_TOKEN }} \
+          --store-password-in-clear-text \
+          --name github "https://nuget.pkg.github.com/${{inputs.nuget-user}}/index.json"
 
     - name: Publish to NuGet
       if: ${{ inputs.publish-github == 'true' }}
       shell: bash
-      run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.nuget-api-key }} --source 'https://api.nuget.org/v3/index.json'
+      run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.nuget-api-key }} --source "github"
+
+    - name: Publish to GitHub Packages
+      if: ${{ inputs.publish-nuget == 'true' }}
+      shell: bash
+      run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.github-api-key }} --source 'https://api.nuget.org/v3/index.json'
