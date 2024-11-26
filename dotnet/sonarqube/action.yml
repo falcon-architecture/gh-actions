@@ -68,13 +68,12 @@ runs:
       shell: bash
       run: |
         ls -ls
-        dotnet restore ${{inputs.solution-path}}"
-        dotnet restore ${{inputs.test-solution-path}}"
+        dotnet restore ${{inputs.solution-path}}
+        dotnet restore ${{inputs.test-solution-path}}
       
     - name: Run tests and collect coverage
       shell: bash
       run: |
-        ls -ls
         ./.sonar/scanner/dotnet-coverage collect "dotnet test ${{inputs.test-solution-path}}" -f xml -o "coverage.xml"
 
     - name: SonarCloud Scan
