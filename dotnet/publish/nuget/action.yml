@@ -1,0 +1,59 @@
+name: Publish
+description: "Publish Dotnet pakcages"
+inputs:
+  solution-path:
+    description: Dotnet solution file path
+  dotnet-version:
+    default: "[9.0.x]"
+    description: dotnet framework version
+  nuget-api-key:
+    description: "Nuget API Key"
+  version:
+    required: true
+    description: "Version"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Install Versionize
+      shell: bash
+      run: dotnet tool install -g versionize
+
+    - name: Restore dependencies
+      shell: bash
+      run: dotnet restore ${{ inputs.solution-path }}
+
+    - name: Build
+      shell: bash
+      run: dotnet build -c release ${{ env.PROJECT }} --no-restore
+
+    - name: Bump versions
+      shell: bash
+      run: |
+        versionize --release-as ${{inputs.version}} --commit-suffix "[skip ci]"
+
+    - name: Push to Github
+      shell: bash
+      run: git push --follow-tags origin master
+
+    - name: Pack
+      shell: bash
+      run: |
+        dotnet pack -c release ${{ inputs.solution-path }} -o . --no-restore
+
+    - name: Publish to NuGet
+      if: github.event.action == 'published' || github.event.action == 'released'
+      shell: bash
+      run: |
+        dotnet nuget push '*.nupkg' --api-key ${{ inputs.nuget-api-key }} --source "https://api.nuget.org/v3/index.json"
+
+    - name: Delete nupkg
+      if: github.event.action == 'deleted'
+      shell: bash
+      run: |
+        dotnet nuget delete ${{ github.event.inputs.package-id }} ${{ inputs.version }} --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --non-interactive
