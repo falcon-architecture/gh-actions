@@ -1,22 +1,10 @@
 name: SonarQube Analysis
 description: "SonarQube Analysis"
 inputs:
-  sources:
-    required: true
-    description: Source code path
-  tests:
-    default: 'tests/'
-    description: Test code path
   solution-path:
     description: Dotnet solution file path
   test-solution-path:
     description: Dotnet test solution file path
-  inclusions:
-    description: Inclusions
-  exclusions:
-    description: Exclusions
-  test-exclusions:
-    description: Test Exclusions  
   dotnet-version:
     default: '[9.0.x]'
     description: dotnet framework version
