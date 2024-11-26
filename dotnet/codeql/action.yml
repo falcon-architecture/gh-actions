@@ -1,6 +1,9 @@
 name: CodeQL
 description: "CodeQL Analysis"
 inputs:
+  dotnet-version:
+    default: '[9.0.x]'
+    description: dotnet framework version
   solution-path:
     description: Dotnet solution file path
   test-solution-path:
@@ -14,7 +17,7 @@ runs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ matrix.dotnet-version }}
+        dotnet-version: ${{ inputs.dotnet-version }}
 
     - name: Restore NuGet packages
       shell: bash

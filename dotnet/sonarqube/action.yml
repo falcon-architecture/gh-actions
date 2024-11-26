@@ -2,7 +2,7 @@ name: SonarQube Analysis
 description: "SonarQube Analysis"
 inputs:
   sources:
-    default: 'src'
+    default: .
     description: Source code path
   solution-path:
     description: Dotnet solution file path
@@ -67,6 +67,7 @@ runs:
     - name: Restore NuGet packages
       shell: bash
       run: |
+        ls -ls
         dotnet restore ${{inputs.solution-path}}"
         dotnet restore ${{inputs.test-solution-path}}"
       
