@@ -2,15 +2,19 @@ name: Publish
 description: "Publish Dotnet pakcages"
 inputs:
   solution-path:
+    required: true
     description: Dotnet solution file path
   dotnet-version:
-    default: "[9.0.x]"
+    default: "9.0.x"
     description: dotnet framework version
   nuget-api-key:
+    required: true
     description: "Nuget API Key"
   git-user:
+    required: true
     description: "Git User Name"
   git-email:
+    required: true
     description: "Git Email id"
   version:
     required: true
@@ -19,6 +23,7 @@ inputs:
     required: true
     description: "Bumped version push"
   branch:
+    default: "main"
     description: "Branch name to push the bumped version changes"
 
 runs:
