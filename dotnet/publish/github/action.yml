@@ -75,7 +75,7 @@ runs:
       run: |
         dotnet nuget add source \
           --username ${{ inputs.nuget-user }} \
-          --password ${{ secrets.GH_PUBLISH_TOKEN }} \
+          --password ${{ inputs.github-publish-token }} \
           --store-password-in-clear-text \
           --name github "https://nuget.pkg.github.com/${{inputs.nuget-user}}/index.json"
 
