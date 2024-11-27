@@ -8,9 +8,18 @@ inputs:
     description: dotnet framework version
   nuget-api-key:
     description: "Nuget API Key"
+  git-user:
+    description: "Git User Name"
+  git-email:
+    description: "Git Email id"
   version:
     required: true
     description: "Version"
+  bumped-version-push:
+    required: true
+    description: "Bumped version push"
+  branch:
+    description: "Branch name to push the bumped version changes"
 
 runs:
   using: "composite"
@@ -38,13 +47,20 @@ runs:
         versionize --release-as ${{inputs.version}} --commit-suffix "[skip ci]"
 
     - name: Push to Github
+      if: ${{ inputs.bumped-version-push }}
       shell: bash
-      run: git push --follow-tags origin master
+      run: git push --follow-tags origin ${{ inputs.branch }}
 
     - name: Pack
       shell: bash
       run: |
         dotnet pack -c release ${{ inputs.solution-path }} -o . --no-restore
+
+    - name: Set up Git configuration
+      shell: bash
+      run: |
+        git config --global user.name ${{ inputs.git-user }}
+        git config --global user.email ${{ inputs.git-email }}
 
     - name: Publish to NuGet
       if: github.event.action == 'published' || github.event.action == 'released'

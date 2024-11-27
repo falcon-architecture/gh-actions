@@ -8,13 +8,18 @@ inputs:
     description: dotnet framework version
   github-api-key:
     description: "GitHub API Key"
-  github-user:
-    description: "GitHub User"
-  github-email:
-    description: "GitHub Email"
+  git-user:
+    description: "Git User Name"
+  git-email:
+    description: "Git Email id"
   version:
     required: true
     description: "Version"
+  bumped-version-push:
+    required: true
+    description: "Bumped version push"
+  branch:
+    description: "Branch name to push the bumped version changes"
 
 runs:
   using: "composite"
@@ -37,13 +42,15 @@ runs:
       run: dotnet build -c release ${{ env.PROJECT }} --no-restore
 
     - name: Bump versions
+      if: ${{ inputs.bump-version }}
       shell: bash
       run: |
         versionize --release-as ${{inputs.version}} --commit-suffix "[skip ci]"
 
     - name: Push to Github
+      if: ${{ inputs.bumped-version-push }}
       shell: bash
-      run: git push --follow-tags origin master
+      run: git push --follow-tags origin ${{ inputs.branch }}
 
     - name: Pack
       shell: bash
@@ -52,8 +59,8 @@ runs:
     - name: Set up Git configuration
       shell: bash
       run: |
-        git config --global user.name ${{ inputs.nuget-user }}
-        git config --global user.email ${{ inputs.nuget-email }}
+        git config --global user.name ${{ inputs.git-user }}
+        git config --global user.email ${{ inputs.git-email }}
 
     - name: Authenticate
       shell: bash
