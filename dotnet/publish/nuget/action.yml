@@ -44,7 +44,13 @@ runs:
 
     - name: Build
       shell: bash
-      run: dotnet build -c release ${{ env.PROJECT }} --no-restore
+      run: dotnet build -c release ${{ env.solution-path }} --no-restore
+
+    - name: Set up Git configuration
+      shell: bash
+      run: |
+        git config --global user.name ${{ inputs.git-user }}
+        git config --global user.email ${{ inputs.git-email }}
 
     - name: Bump versions
       shell: bash
@@ -56,11 +62,7 @@ runs:
       run: |
         dotnet pack -c release ${{ inputs.solution-path }} -o . --no-restore
 
-    - name: Set up Git configuration
-      shell: bash
-      run: |
-        git config --global user.name ${{ inputs.git-user }}
-        git config --global user.email ${{ inputs.git-email }}
+
 
     - name: Publish to NuGet
       if: github.event.action == 'published'

@@ -49,6 +49,12 @@ runs:
       shell: bash
       run: dotnet build -c release ${{ env.solution-path }} --no-restore
 
+    - name: Set up Git configuration
+      shell: bash
+      run: |
+        git config --global user.name ${{ inputs.git-user }}
+        git config --global user.email ${{ inputs.git-email }}
+
     - name: Bump versions
       if: ${{ inputs.bump-version }}
       shell: bash
@@ -59,20 +65,18 @@ runs:
       shell: bash
       run: dotnet pack -c release ${{ inputs.solution-path }} -o . --no-restore
 
-    - name: Set up Git configuration
-      shell: bash
-      run: |
-        git config --global user.name ${{ inputs.git-user }}
-        git config --global user.email ${{ inputs.git-email }}
-
     - name: Authenticate GitHub Packages
       shell: bash
       run: |
-        dotnet nuget add source \
-          --username ${{ inputs.git-user }} \
-          --password ${{ inputs.github-publish-token }} \
-          --store-password-in-clear-text \
-          --name github "https://nuget.pkg.github.com/${{inputs.nuget-user}}/index.json"
+        if dotnet nuget list source | grep -q "github"; then
+          echo "NuGet source 'github' already exists, skipping addition."
+        else
+          dotnet nuget add source \
+            --username ${{ inputs.git-user }} \
+            --password ${{ inputs.github-publish-token }} \
+            --store-password-in-clear-text \
+            --name github "https://nuget.pkg.github.com/${{inputs.nuget-user}}/index.json"
+        fi
 
     - name: Publish to GitHub Packages
       if: github.event.action == 'published' || github.event.action == 'released'
