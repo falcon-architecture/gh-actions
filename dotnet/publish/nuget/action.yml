@@ -53,6 +53,7 @@ runs:
         git config --global user.email ${{ inputs.git-email }}
 
     - name: Bump versions
+      if: ${{ inputs.bumped-version-push }}
       shell: bash
       run: |
         versionize --release-as ${{inputs.version}} --commit-suffix "[skip ci]"
@@ -61,8 +62,6 @@ runs:
       shell: bash
       run: |
         dotnet pack -c release ${{ inputs.solution-path }} -o . --no-restore
-
-
 
     - name: Publish to NuGet
       if: github.event.action == 'published'
