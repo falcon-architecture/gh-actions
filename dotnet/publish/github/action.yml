@@ -10,9 +10,6 @@ inputs:
   github-api-key:
     required: true
     description: "GitHub API Key"
-  github-publish-token:
-    required: true
-    description: "GitHub Publish Token"
   github-publish-action:
     default: 'prereleased'
     description: "GitHub Publish Action"
@@ -76,7 +73,7 @@ runs:
         else
           dotnet nuget add source \
             --username ${{ inputs.git-user }} \
-            --password ${{ inputs.github-publish-token }} \
+            --password ${{ inputs.github-api-key }} \
             --store-password-in-clear-text \
             --name github "https://nuget.pkg.github.com/${{inputs.nuget-user}}/index.json"
         fi
