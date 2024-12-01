@@ -69,7 +69,7 @@ runs:
       shell: bash
       run: |
         dotnet nuget add source \
-          --username ${{ inputs.nuget-user }} \
+          --username ${{ inputs.git-user }} \
           --password ${{ inputs.github-publish-token }} \
           --store-password-in-clear-text \
           --name github "https://nuget.pkg.github.com/${{inputs.nuget-user}}/index.json"
