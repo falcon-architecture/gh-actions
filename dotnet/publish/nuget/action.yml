@@ -10,6 +10,9 @@ inputs:
   nuget-api-key:
     required: true
     description: "Nuget API Key"
+  nuget-publish-action:
+    default: 'released'
+    description: "Nuget Publish Action"
   git-user:
     required: true
     description: "Git User Name"
@@ -64,7 +67,7 @@ runs:
         dotnet pack -c release ${{ inputs.solution-path }} -o . --no-restore
 
     - name: Publish to NuGet
-      if: github.event.action == 'published'
+      if: github.event.action == ${{ inputs.nuget-publish-action }}
       shell: bash
       run: |
         dotnet nuget push '*.nupkg' --api-key ${{ inputs.nuget-api-key }} --source "https://api.nuget.org/v3/index.json"

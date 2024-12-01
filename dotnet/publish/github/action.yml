@@ -13,6 +13,9 @@ inputs:
   github-publish-token:
     required: true
     description: "GitHub Publish Token"
+  github-publish-action:
+    default: 'prereleased'
+    description: "GitHub Publish Action"
   git-user:
     required: true
     description: "Git User Name"
@@ -79,7 +82,7 @@ runs:
         fi
 
     - name: Publish to GitHub Packages
-      if: github.event.action == 'published' || github.event.action == 'released'
+      if: github.event.action == ${{ inputs.github-publish-action }}
       shell: bash
       run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.github-api-key }} --source 'github'
 
