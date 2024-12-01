@@ -51,11 +51,6 @@ runs:
       run: |
         versionize --release-as ${{inputs.version}} --commit-suffix "[skip ci]"
 
-    - name: Push to Github
-      if: ${{ inputs.bumped-version-push }}
-      shell: bash
-      run: git push --follow-tags origin ${{ inputs.branch }}
-
     - name: Pack
       shell: bash
       run: |
@@ -78,3 +73,8 @@ runs:
       shell: bash
       run: |
         dotnet nuget delete ${{ github.event.inputs.package-id }} ${{ inputs.version }} --source https://api.nuget.org/v3/index.json --api-key $NUGET_API_KEY --non-interactive
+
+    - name: Push to Github
+      if: ${{ inputs.bumped-version-push }}
+      shell: bash
+      run: git push --follow-tags origin ${{ inputs.branch }}

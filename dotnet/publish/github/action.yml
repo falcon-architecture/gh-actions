@@ -47,18 +47,13 @@ runs:
 
     - name: Build
       shell: bash
-      run: dotnet build -c release ${{ env.PROJECT }} --no-restore
+      run: dotnet build -c release ${{ env.solution-path }} --no-restore
 
     - name: Bump versions
       if: ${{ inputs.bump-version }}
       shell: bash
       run: |
         versionize --release-as ${{inputs.version}} --commit-suffix "[skip ci]"
-
-    - name: Push to Github
-      if: ${{ inputs.bumped-version-push }}
-      shell: bash
-      run: git push --follow-tags origin ${{ inputs.branch }}
 
     - name: Pack
       shell: bash
@@ -83,3 +78,8 @@ runs:
       if: github.event.action == 'published' || github.event.action == 'released'
       shell: bash
       run: dotnet nuget push '*.nupkg' --api-key ${{ inputs.github-api-key }} --source 'github'
+
+    - name: Push to Github
+      if: ${{ inputs.bumped-version-push }}
+      shell: bash
+      run: git push --follow-tags origin ${{ inputs.branch }}
