@@ -75,7 +75,7 @@ runs:
             --username ${{ inputs.git-user }} \
             --password ${{ inputs.github-api-key }} \
             --store-password-in-clear-text \
-            --name github "https://nuget.pkg.github.com/${{inputs.nuget-user}}/index.json"
+            --name github "https://nuget.pkg.github.com/${{inputs.git-user}}/index.json"
         fi
 
     - name: Publish to GitHub Packages
