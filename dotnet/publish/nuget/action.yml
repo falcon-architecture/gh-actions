@@ -74,8 +74,14 @@ runs:
 
     - name: Push to Github
       if: ${{ inputs.bumped-version-push }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: bash
-      run: git push --follow-tags origin ${{ inputs.branch }}
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+        git push --follow-tags origin ${{ inputs.branch }}
 
     - name: Delete nupkg
       if: github.event.action == 'deleted'
